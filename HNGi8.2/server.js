@@ -22,17 +22,26 @@ app.use(express.json())
 
 
 app.get('/', async (req, res)=>{
-	const userData = await db.collection('todos')
-	res.render('index.ejs', { info: userData})
+	try {
+		const userData = await db.collection('infos')
+		
+		return res.render('index.ejs', { info: userData})
+	} catch (err) {
+		return res.status(500).json(err)
+	}
 })
+
 
 app.post('/info', (req, res) => {
 	db.collection('infos').insertOne({userInfo: req.body.userInfo})
+
 	.then(result => {
-		res.redirect('/')
+		return res.redirect('/')
 	})
+
 	.catch(error => console.error(error))
 })
+
 
 
 app.listen(process.env.PORT || PORT, ()=>{
